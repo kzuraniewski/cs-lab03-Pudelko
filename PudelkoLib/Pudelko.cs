@@ -27,6 +27,8 @@ public sealed class Pudelko : IFormattable
 
     public double Objetosc => Math.Round(A.Meters * B.Meters * C.Meters, 9);
 
+    public double Pole => Math.Round(2 * (A.Meters * B.Meters + B.Meters * C.Meters + A.Meters * C.Meters), 6);
+
     public Pudelko(
         double A = DEFAULT_SIZE_METERS,
         double B = DEFAULT_SIZE_METERS,
