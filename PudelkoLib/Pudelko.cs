@@ -4,9 +4,9 @@ namespace PudelkoLib;
 
 public sealed class Pudelko : IFormattable
 {
-    private const float MIN_SIZE_METERS = 0f;
-    private const float MAX_SIZE_METERS = 10f;
-    private const float DEFAULT_SIZE_METERS = 0.1f;
+    private const double MIN_SIZE_METERS = 0;
+    private const double MAX_SIZE_METERS = 10;
+    private const double DEFAULT_SIZE_METERS = 0.1;
 
     private Dimension _a, _b, _c;
     public Dimension A
@@ -25,10 +25,12 @@ public sealed class Pudelko : IFormattable
         private set => ValidateDimension(_c = value);
     }
 
+    public double Objetosc => Math.Round(A.Meters * B.Meters * C.Meters, 9);
+
     public Pudelko(
-        float A = DEFAULT_SIZE_METERS,
-        float B = DEFAULT_SIZE_METERS,
-        float C = DEFAULT_SIZE_METERS,
+        double A = DEFAULT_SIZE_METERS,
+        double B = DEFAULT_SIZE_METERS,
+        double C = DEFAULT_SIZE_METERS,
         UnitOfMeasure unitOfMeasure = UnitOfMeasure.Meter
     )
     {

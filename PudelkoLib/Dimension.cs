@@ -4,21 +4,21 @@ namespace PudelkoLib;
 
 public struct Dimension : IFormattable
 {
-    public float Meters { get; set; }
+    public double Meters { get; set; }
 
-    public float Centimeters
+    public double Centimeters
     {
         get => Meters * 100;
         set => Meters = value / 100;
     }
 
-    public float Milimeters
+    public double Milimeters
     {
         get => Meters * 1000;
         set => Meters = value / 1000;
     }
 
-    public Dimension(float value, UnitOfMeasure unitOfMeasure = UnitOfMeasure.Meter)
+    public Dimension(double value, UnitOfMeasure unitOfMeasure = UnitOfMeasure.Meter)
     {
         Meters = unitOfMeasure switch
         {
@@ -29,7 +29,7 @@ public struct Dimension : IFormattable
         };
     }
 
-    public static implicit operator Dimension(float v) => new Dimension(v);
+    public static implicit operator Dimension(double v) => new Dimension(v);
 
     public string ToString(string? format = "m", IFormatProvider? formatProvider = null)
     {
