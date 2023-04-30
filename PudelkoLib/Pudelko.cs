@@ -71,8 +71,8 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pud
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
 
-        static List<double> GetDimensionsSorted(Pudelko box) =>
-            new List<double>() { box.A.Meters, box.B.Meters, box.C.Meters }.OrderBy(d => d).ToList();
+        static double[] GetDimensionsSorted(Pudelko box) =>
+            ((double[])box).OrderBy(d => d).ToArray();
 
         return GetDimensionsSorted(this).SequenceEqual(GetDimensionsSorted(other));
     }
@@ -114,4 +114,21 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pud
     public static bool operator <(Pudelko? p1, Pudelko? p2) => p1 is not null && p1.CompareTo(p2) == -1;
     
     public static bool operator <=(Pudelko? p1, Pudelko? p2) => !(p1 > p2);
+
+    /// <summary>
+    /// Casts Pudelko to an array of its dimensions in meters.
+    /// </summary>
+    public static explicit operator double[](Pudelko p) => new double[3] { p.A.Meters, p.B.Meters, p.C.Meters };
+
+    /// <summary>
+    /// Casts a tuple of box dimensions (in milimeters) to Pudelko.
+    /// </summary>
+    /// <param name="dimensions">Box dimensions in milimeters</param>
+    public static implicit operator Pudelko(ValueTuple<int, int, int> dimensions) =>
+        new Pudelko(
+            dimensions.Item1, 
+            dimensions.Item2,
+            dimensions.Item3,
+            UnitOfMeasure.Milimeter
+        );
 }
