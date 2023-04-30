@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace PudelkoLib;
 
-public sealed class Pudelko : IFormattable
+public sealed class Pudelko : IFormattable, IEquatable<Pudelko>
 {
     private const double MIN_SIZE_METERS = 0;
     private const double MAX_SIZE_METERS = 10;
@@ -52,9 +52,45 @@ public sealed class Pudelko : IFormattable
         if (String.IsNullOrEmpty(format)) format = "m";
         formatProvider ??= CultureInfo.CurrentCulture;
 
-        string[] FormatDimensions(params Dimension[] dimensions) => 
+        string[] FormatDimensions(params Dimension[] dimensions) =>
             dimensions.Select(dimension => dimension.ToString(format, formatProvider)).ToArray();
 
         return String.Join(" × ", FormatDimensions(A, B, C));
     }
+
+    public override bool Equals(object? obj)
+    {
+        if ((obj == null) || !GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            Pudelko p = (Pudelko)obj;
+            return Equals(p);
+        }
+    }
+
+    public bool Equals(Pudelko? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        static List<double> GetDimensionsSorted(Pudelko box) => 
+            new List<double>() { box.A.Meters, box.B.Meters, box.C.Meters }.OrderBy(d => d).ToList();
+
+        return GetDimensionsSorted(this).SequenceEqual(GetDimensionsSorted(other));
+    }
+
+    public static bool Equals(Pudelko? p1, Pudelko? p2)
+    {
+        if (p1 is null) return p2 is null;
+        return p1.Equals(p2);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(A, B, C);
+
+    public static bool operator ==(Pudelko? p1, Pudelko? p2) => Equals(p1, p2);
+
+    public static bool operator !=(Pudelko? p1, Pudelko? p2) => !(p1 == p2);
 }
