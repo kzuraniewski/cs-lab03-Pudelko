@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace PudelkoLib;
 
@@ -52,6 +53,17 @@ public sealed class Pudelko :
         this.A = new Dimension(A, unitOfMeasure);
         this.B = new Dimension(B, unitOfMeasure);
         this.C = new Dimension(C, unitOfMeasure);
+    }
+
+    public Pudelko(
+        Dimension? A = null,
+        Dimension? B = null,
+        Dimension? C = null
+    )
+    {
+        this.A = A ?? DEFAULT_SIZE_METERS;
+        this.B = B ?? DEFAULT_SIZE_METERS;
+        this.C = C ?? DEFAULT_SIZE_METERS;
     }
 
     private static void ValidateDimension(Dimension value)
@@ -148,4 +160,16 @@ public sealed class Pudelko :
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public static Pudelko Parse(string text)
+    {
+        if (text is null) throw new ArgumentNullException(nameof(text));
+
+        Dimension[] dimensions = text
+            .Split("×")
+            .Select(Dimension.Parse)
+            .ToArray();
+
+        return new Pudelko(dimensions[0], dimensions[1], dimensions[2]);
+    }
 }

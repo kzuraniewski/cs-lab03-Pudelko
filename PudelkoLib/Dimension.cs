@@ -1,9 +1,12 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace PudelkoLib;
 
 public class Dimension : IFormattable, IEquatable<Dimension>
 {
+    public const string VALUE_REGEX = @"(\d+(?:[.,]\d+)?)\s*(mm|cm|m)";
+    
     public double Meters { get; set; }
 
     public double Centimeters
@@ -30,6 +33,8 @@ public class Dimension : IFormattable, IEquatable<Dimension>
     }
 
     public static implicit operator Dimension(double v) => new Dimension(v);
+
+    public static explicit operator double(Dimension d) => d.Meters;
 
     public string ToString(string? format = "m", IFormatProvider? formatProvider = null)
     {
@@ -78,4 +83,23 @@ public class Dimension : IFormattable, IEquatable<Dimension>
     public static bool operator ==(Dimension? p1, Dimension? p2) => Equals(p1, p2);
 
     public static bool operator !=(Dimension? p1, Dimension? p2) => !(p1 == p2);
+
+    public static Dimension Parse(string text)
+    {
+        if (text is null) throw new ArgumentNullException(nameof(text));
+
+        Match match = Regex.Match(text, VALUE_REGEX);
+        if (!match.Success) throw new FormatException();
+
+        var value = Double.Parse(match.Groups[1].Value);
+        var unit = match.Groups[2].Value switch
+        {
+            "mm" => UnitOfMeasure.Milimeter,
+            "cm" => UnitOfMeasure.Centimeter,
+            "m" => UnitOfMeasure.Meter,
+            _ => throw new FormatException("Invalid unit format")
+        };
+
+        return new Dimension(value, unit);
+    }
 }
