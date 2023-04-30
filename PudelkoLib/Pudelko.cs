@@ -27,6 +27,8 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pud
         private set => ValidateDimension(_c = value);
     }
 
+    public double this[int i] => ((double[])this)[i];
+
     public double Objetosc => Math.Round(A.Meters * B.Meters * C.Meters, 9);
 
     public double Pole => Math.Round(2 * (A.Meters * B.Meters + B.Meters * C.Meters + A.Meters * C.Meters), 6);
