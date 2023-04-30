@@ -1,10 +1,15 @@
+using System.Collections;
 using System.Globalization;
 
 namespace PudelkoLib;
 
 // todo pkt 8
 
-public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pudelko>
+public sealed class Pudelko :
+    IFormattable,
+    IEquatable<Pudelko>,
+    IComparable<Pudelko>,
+    IEnumerable<double>
 {
     private const double MIN_SIZE_METERS = 0;
     private const double MAX_SIZE_METERS = 10;
@@ -106,15 +111,15 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pud
     }
 
     public static bool operator ==(Pudelko? p1, Pudelko? p2) => Equals(p1, p2);
-    
+
     public static bool operator !=(Pudelko? p1, Pudelko? p2) => !(p1 == p2);
 
     public static bool operator >(Pudelko? p1, Pudelko? p2) => p1 is not null && p1.CompareTo(p2) == 1;
-    
+
     public static bool operator >=(Pudelko? p1, Pudelko? p2) => !(p1 < p2);
 
     public static bool operator <(Pudelko? p1, Pudelko? p2) => p1 is not null && p1.CompareTo(p2) == -1;
-    
+
     public static bool operator <=(Pudelko? p1, Pudelko? p2) => !(p1 > p2);
 
     /// <summary>
@@ -128,9 +133,19 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pud
     /// <param name="dimensions">Box dimensions in milimeters</param>
     public static implicit operator Pudelko(ValueTuple<int, int, int> dimensions) =>
         new Pudelko(
-            dimensions.Item1, 
+            dimensions.Item1,
             dimensions.Item2,
             dimensions.Item3,
             UnitOfMeasure.Milimeter
         );
+
+    public IEnumerator<double> GetEnumerator()
+    {
+        foreach (var dimension in (double[])this)
+        {
+            yield return dimension;
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
