@@ -2,7 +2,9 @@ using System.Globalization;
 
 namespace PudelkoLib;
 
-public sealed class Pudelko : IFormattable, IEquatable<Pudelko>
+// todo pkt 8
+
+public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IComparable<Pudelko>
 {
     private const double MIN_SIZE_METERS = 0;
     private const double MAX_SIZE_METERS = 10;
@@ -28,6 +30,10 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>
     public double Objetosc => Math.Round(A.Meters * B.Meters * C.Meters, 9);
 
     public double Pole => Math.Round(2 * (A.Meters * B.Meters + B.Meters * C.Meters + A.Meters * C.Meters), 6);
+
+    public Dimension MinDimension => new Dimension(new List<double>() { A.Meters, B.Meters, C.Meters }.Min());
+
+    public Dimension MaxDimension => new Dimension(new List<double>() { A.Meters, B.Meters, C.Meters }.Max());
 
     public Pudelko(
         double A = DEFAULT_SIZE_METERS,
@@ -58,6 +64,19 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>
         return String.Join(" × ", FormatDimensions(A, B, C));
     }
 
+    public override int GetHashCode() => HashCode.Combine(A, B, C);
+
+    public bool Equals(Pudelko? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        static List<double> GetDimensionsSorted(Pudelko box) =>
+            new List<double>() { box.A.Meters, box.B.Meters, box.C.Meters }.OrderBy(d => d).ToList();
+
+        return GetDimensionsSorted(this).SequenceEqual(GetDimensionsSorted(other));
+    }
+
     public override bool Equals(object? obj)
     {
         if ((obj == null) || !GetType().Equals(obj.GetType()))
@@ -71,26 +90,28 @@ public sealed class Pudelko : IFormattable, IEquatable<Pudelko>
         }
     }
 
-    public bool Equals(Pudelko? other)
-    {
-        if (other is null) return false;
-        if (ReferenceEquals(this, other)) return true;
-
-        static List<double> GetDimensionsSorted(Pudelko box) => 
-            new List<double>() { box.A.Meters, box.B.Meters, box.C.Meters }.OrderBy(d => d).ToList();
-
-        return GetDimensionsSorted(this).SequenceEqual(GetDimensionsSorted(other));
-    }
-
     public static bool Equals(Pudelko? p1, Pudelko? p2)
     {
         if (p1 is null) return p2 is null;
         return p1.Equals(p2);
     }
 
-    public override int GetHashCode() => HashCode.Combine(A, B, C);
+    public int CompareTo(Pudelko? other)
+    {
+        if (other is null) return 1;
+
+        return Objetosc.CompareTo(other.Objetosc);
+    }
 
     public static bool operator ==(Pudelko? p1, Pudelko? p2) => Equals(p1, p2);
-
+    
     public static bool operator !=(Pudelko? p1, Pudelko? p2) => !(p1 == p2);
+
+    public static bool operator >(Pudelko? p1, Pudelko? p2) => p1 is not null && p1.CompareTo(p2) == 1;
+    
+    public static bool operator >=(Pudelko? p1, Pudelko? p2) => !(p1 < p2);
+
+    public static bool operator <(Pudelko? p1, Pudelko? p2) => p1 is not null && p1.CompareTo(p2) == -1;
+    
+    public static bool operator <=(Pudelko? p1, Pudelko? p2) => !(p1 > p2);
 }
