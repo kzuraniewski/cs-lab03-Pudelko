@@ -43,9 +43,8 @@ public sealed class Pudelko : IFormattable
 
     private static void ValidateDimension(Dimension value)
     {
-        // FIXME
-        if (value.Meters <= MIN_SIZE_METERS) throw new ArgumentOutOfRangeException();
-        if (value.Meters >= MAX_SIZE_METERS) throw new ArgumentOutOfRangeException();
+        if (value.Meters <= MIN_SIZE_METERS) throw new ArgumentOutOfRangeException(nameof(value));
+        if (value.Meters >= MAX_SIZE_METERS) throw new ArgumentOutOfRangeException(nameof(value));
     }
 
     public string ToString(string? format = "m", IFormatProvider? formatProvider = null)
